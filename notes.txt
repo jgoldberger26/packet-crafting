@@ -1,0 +1,110 @@
+Packet Crafting
+
+Scapy Challenge Ideas:
+- ip spoofing
+  - "I only accept packets from this specific ip address."
+    - https://stackoverflow.com/questions/41166420/sending-a-packet-over-physical-loopback-in-scapy
+    - https://scapy.readthedocs.io/en/latest/troubleshooting.html#i-can-t-ping-127-0-0-1-or-1-scapy-does-not-work-with-127-0-0-1-or-1-on-the-loopback-interface
+    - ^^^ I Hate this
+    - We have to do `conf.L3socket = L3RawSocket` for this to work.
+    - LOWERCASE L3socket!!!!!!!
+  - "I only accept ipv5."
+  - "I am an evil program, I only accept EVIL packets https://en.wikipedia.org/wiki/Evil_bit"
+  - Can do like 3 of these
+  - "Admin connects from this ip address"
+    - Submit hash of password field
+  - Hardcoded length at buffer[20] or whatever, but ip headers can be longer
+- Buffer overflow w/ naive length parsing at layer 4
+  - Reader.c
+  - Simple variable overflow
+  - Shellcode
+- Packet replay: Sending an exact sequence of bytes, but with custom tcp
+  - "We can't get into this binary! All we have is this pcap."
+  - "Here's the protocol: This field is a timestamp, and we verify it."
+    - Slight modification to packet relay
+
+Slides:
+- What are packets?
+- Structure of an ETH/TCP/IP Packet
+- Packet crafting
+  - https://msrc.microsoft.com/update-guide/vulnerability/CVE-2024-38063
+  - Real packet crafting vulnerability found this summer
+  - Leads to RCE on MS Windows by sending malformed packets
+  - Integer underflow
+  - 9.8 CVE
+- BRUTE FORCE WARNING
+  - We are going to be mentioning, not really covering, a few (not many) brute
+    force techniques. DO NOT attack the RPI network, the network admins mean
+    business and WILL send you an email. You are being tracked at the wifi
+    level and packet forgery WILL NOT protect you.
+- Sniffing
+  - We will not be sniffing today, as we are mostly not doing network analysis,
+    though it is a legitimate network recon technique and available in scapy.
+- Packet Parsing
+  - For gigabit wireless speeds, lower layer parsing is sometimes done in hardware
+  - For embedded stuff, (mostly our targets), parsing is often just done in software
+- Scapy
+  - Wireshark is better for packet analysis, and it is easy to collect pcaps with it
+  - Scapy is a tool that can do pcaps, but is more suited for sending packets
+  - Scapy is a generic tool. Meant to be hacky, but not specifically for offensive security.
+  - Higher level: nc, pwntools
+- IP Spoofing
+- Buffer Overflow
+- Packet replay
+
+
+- Physical Router Challenges
+  - nmap? (DISCLAIMER DO __NOT__ RUN THIS ON RPI WIFI)
+  - aircrackng(? Irrelevant tbh)
+
+- Minecraft challenge (raise your hand when you get to the crypto part)
+  - Not relevant anymore
+
+- Connection hijacking
+
+Useful commands:
+- help(IP) (man page)
+- ls(IP) (list fields)
+
+man socket
+man packet
+
+https://0xbharath.github.io/art-of-packet-crafting-with-scapy/index.html
+
+Replay?
+- Example Scenario https://en.wikipedia.org/wiki/Challenge%E2%80%93response_authentication#Simple_example_mutual_authentication_sequence
+- Client: login: alice
+- Server: Welcome, alice! Challenge: (randomly generated from a pool of like 5)
+- Client: Challenge response: (the response)
+- Server: Authenticated! My next message will contain the flag.
+- Server: flag{12345} (Cut out of pcap)
+
+Replay 2:
+- Same as replay 1 but you need current timestamps, modify those on the fly
+
+Obviously you can get around replays by just sending the straight bytes any other way, its the concept that matters.
+Maybe combine with ip spoofing?
+
+
+Docker solve for 1
+echo -en "\x00\x10Hello!" | nc -u localhost 54321
+
+Physical Ideas:
+ARP Spoofing (Router is sending to a specific IP addr, become that)
+Port scanning (One port is giving flag away for free, find that)
+MITM1 (Just listen)
+- Can also be solved with promiscuous mode sniffing
+MITM2 (Modify bytes)
+- There is a checksum, but the salt never changes, so you can do it manually
+MITM3 (Modify bytes)
+- There is a checksum, but the salt keeps changing, so you have to intercept or script it
+MITM4 (Modify bytes)
+- You have to take over the key exchange
+
+To Setup Pi:
+https://woshub.com/create-wi-fi-access-point-hotspot-linux/
+
+- Use nmcli
+https://unix.stackexchange.com/questions/548855/networkmanager-hotspot-vs-hostapd
+
+iw reg set US
