@@ -1,0 +1,8 @@
+FROM ubuntu:latest
+
+WORKDIR /chal
+COPY ipspoof chal
+
+ENV CHALPORT=47139
+EXPOSE ${CHALPORT}/udp
+ENTRYPOINT [ "/chal/chal" ]
