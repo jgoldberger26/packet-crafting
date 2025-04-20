@@ -1,0 +1,8 @@
+FROM ubuntu:latest
+
+WORKDIR /chal
+COPY scapy101 chal
+
+ENV CHALPORT=47140
+EXPOSE ${CHALPORT}/udp
+ENTRYPOINT [ "/chal/chal" ]
