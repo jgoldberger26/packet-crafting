@@ -1,0 +1,8 @@
+FROM ubuntu:latest
+
+WORKDIR /chal
+COPY appbof chal
+
+ENV CHALPORT=47137
+EXPOSE ${CHALPORT}/udp
+ENTRYPOINT [ "/chal/chal" ]
