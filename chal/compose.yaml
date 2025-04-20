@@ -1,0 +1,41 @@
+# A docker compose that launches the following containers:
+# packet-crafting/appbof
+# packet-crafting/evil
+# packet-crafting/ipspoof
+# packet-crafting/scapy101
+# packet-crafting/udpbof
+
+version: '3.8'
+
+services:
+  appbof:
+    image: packet-crafting/appbof
+    container_name: pc-appbof
+    build: appbof
+    ports:
+      - "47137:47137/udp"
+
+  evil:
+    image: packet-crafting/evil
+    container_name: pc-evil
+    build: evil
+    network_mode: "host"
+
+  ipspoof:
+    image: packet-crafting/ipspoof
+    container_name: pc-ipspoof
+    build: ipspoof
+    network_mode: "host"
+
+  scapy101:
+    image: packet-crafting/scapy101
+    container_name: pc-scapy101
+    build: scapy101
+    ports:
+      - "47140:47140/udp"
+
+  udpbof:
+    image: packet-crafting/udpbof
+    container_name: pc-udpbof
+    build: udpbof
+    network_mode: "host"
